@@ -5,7 +5,7 @@ seckenSDK
 
 ## 安装
 
-洋葱私有云api demo的安装非常容易。请在[洋葱github](https://www.yangcong.com)下载文件，然后执行下面命令。
+洋葱私有云api demo的安装非常容易。请在[洋葱github](https://github.com/secken/Secken-Server-SDK-For-Python)下载文件，然后执行下面命令。
 
 ```
 python setup.py install
