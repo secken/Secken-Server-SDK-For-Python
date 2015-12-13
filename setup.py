@@ -10,5 +10,5 @@ setup(
 	license='LGPL',
 	packages=find_packages(),
 	scripts=['seckenSDK.py'],
-	py_modules=[]
+	py_modules=['seckenSDK']
 )

@@ -21,108 +21,119 @@
 # @version    1.0.0
 #
 
-
-import requests, hashlib, time, random, string, rsa, base64, ast
+import requests
+import hashlib
+import time
+import random
+import string
+import rsa
+import base64
+import ast
 from operator import itemgetter
 import simplejson as json
 
-class SeckenSDK(object):
+API_URL = 'https://api.sdk.yangcong.com'
+test_app_id = 'IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4'
+test_app_key = 'ELD0DNzMYep7m6Uo1v3v'
+test_uid = 'secken'
+test_event_id = '1' * 40
+test_auth_token = '1' * 40
+
+DEFAULT_APP_ID = lambda x: x or test_app_id
+DEFAULT_APP_KEY = lambda x: x or test_app_key
+DEFAULT_UID = lambda x: x or test_uid
+DEFAULT_EVENT_ID = lambda x: x or test_event_id
+DEFAULT_AUTH_TOKEN = lambda x: x or test_auth_token
+
+# 生成上传参数签名
+def gen_signature(data_dict, app_key):
 	'''
-	SeckenSDK类显示如何集成secken sdk服务
+	generate a signature based on alphabetical order of data_dict's keys
 	'''
-	def __init__(self, app_id, app_key, uid):
-		self.url = 'https://api.sdk.yangcong.com'
-		self.app_id = app_id.decode('utf-8')
-		self.app_key = app_key.decode('utf-8')
-		self.uid = uid.decode('utf-8')
-		self.event_id = None
+	temp_data = sorted(data_dict.iteritems(), key=itemgetter(0))
+	sig_str = ''
+	for key in temp_data:
+		sig_str = sig_str + key[0] + '=' + key[1]
+	sig_str = sig_str + app_key
+	return hashlib.sha1(sig_str).hexdigest()
 
-	def __get_signature(self, data):
-		temp_data = sorted(data.iteritems(), key=itemgetter(0))
-		sig_str = ''
-		for key in temp_data:
-			sig_str = sig_str + key[0] + '=' + key[1]
-		sig_str = sig_str + self.app_key
-		return hashlib.sha1(sig_str).hexdigest()
- 
- 	# 测试sdk api的连通性
-	def testIndex(self):
-		r = requests.get(self.url, timeout=10)
-		if r.status_code == 200:
-			print r.text
+# 测试sdk api的连通性
+def test_service():
+	r = requests.get(API_URL, timeout=10)
+	if r.status_code == 200:
+		print 'service work'
+	else:
+		print 'Oops!!! Sorrrry, service failed, retry later'
 
-	# 获取二维码链接的地址及事件id
-	def testQrcode4Auth(self, **params):
-		if len(params) >= 0 and len(params) <= 4:
-			for key in params:
-				if key not in ['auth_type', 'action_type', 'action_details', 'callback']:
-					print 'params error'
-					return None
-			params['app_id'] = self.app_id
-			params['signature'] = self.__get_signature(params)
-			r = requests.get(self.url+'/qrcode_for_auth', params=params, timeout=10)
-			if r.status_code == 200:
-				result = ast.literal_eval(r.text)
-				if result['status'] == 200:
-					self.event_id = result['event_id']
-					return self.event_id, result['qrcode_url']
-				else:
-					return None
-			else:
-				return None
+# 获取二维码链接地址及事件id
+def test_qrcode_for_auth(app_id=None, app_key=None, **options):
+	if len(options) > 4 or len(set(options.keys()) | set(['auth_type', 'action_type', 'action_details', 'callback'])) > 4:
+		print 'param error'
+		return
 
-	# 获取推送验证的事件id
-	def testRealAuth(self, **params):
-		if len(params) >= 0 and len(params) <= 4:
-			for key in params:
-				if key not in ['auth_type', 'action_type', 'action_details', 'callback']:
-					return 'params error'
+	params = options
+	params['app_id'] = str(DEFAULT_APP_ID(app_id)).decode('utf8')
+	app_key = str(DEFAULT_APP_KEY(app_key)).decode('utf8')
+	params['signature'] = gen_signature(params, app_key)
 
-			params['app_id'] = self.app_id
-			params['uid'] = self.uid
-			params['signature'] = self.__get_signature(params)
-			r = requests.post(self.url+'/realtime_authorization', params=params, timeout=10)
-			if r.status_code == 200:
-				result = ast.literal_eval(r.text)
-				if result['status'] == 200:
-					self.event_id = result['event_id']
-					return self.event_id
-				else:
-					return None
-			else:
-				return None
+	r = requests.get(API_URL+'/qrcode_for_auth', params=params, timeout=10)
 
-	# 测试授权验证的结果
-	def testQueryAuthToken(self, auth_token):
-		params = {'app_id': app_id, 'auth_token': auth_token}
-		params['signature'] = self.__get_signature(params)
-		r = requests.get(self.url+'/query_auth_token', params=params, timeout=10)
-		if r.status_code == 200:
-			return r.text
+	if r.status_code == 200:
+		return r.text
+	else:
+		return None
 
-	# 测试事件结果
-	def testEventResult(self):
-		if not self.event_id:
-			print 'event_id not exists'
-			return None
-		params = {'app_id': self.app_id, 'event_id': self.event_id}
-		params['signature'] = self.__get_signature(params)
-		r = requests.get(self.url+'/event_result', params=params, timeout=10)
-		if r.status_code == 200:
-			return r.text
+# 获取推送验证的事件id
+def test_realtime_auth(app_id=None, app_key=None, uid=None, **options):
+	if len(options) > 4 or len(set(options.keys()) | set(['auth_type', 'action_type', 'action_details', 'callback'])) > 4:
+		print 'param error'
+		return
 
-if __name__ == '__main__':
-	app_id = 'IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4'
-	app_key = 'ELD0DNzMYep7m6Uo1v3v'
-	uid = 'secken'
+	params = options
+	params['app_id'] = str(DEFAULT_APP_ID(app_id)).decode('utf8')
+	params['uid'] = str(DEFAULT_UID(uid)).decode('utf8')
+	app_key = str(DEFAULT_APP_KEY(app_key)).decode('utf8')
+	params['signature'] = gen_signature(params, app_key)
 
-	obj = SeckenSDK(app_id, app_key, uid)
+	r = requests.post(API_URL+'/realtime_authorization', params=params, timeout=10)
 
-	obj.testIndex()
-	print repr(obj.testQrcode4Auth())
-	print obj.testRealAuth()
-	print obj.testEventResult()
-	print obj.testQueryAuthToken('asdasdasd')
+	if r.status_code == 200:
+		return r.text
+	else:
+		return None
+
+# 测试查询事件结果
+def test_event_result(app_id=None, app_key=None, event_id=None):
+	params = {
+			'app_id': str(DEFAULT_APP_ID(app_id)).decode('utf8'),
+			'event_id': str(DEFAULT_EVENT_ID(event_id)).decode('utf8')
+			}
+	app_key = str(DEFAULT_APP_KEY(app_key)).decode('utf8')
+	params['signature'] = gen_signature(params, app_key)
+
+	r = requests.get(API_URL+'/event_result', params=params, timeout=10)
+
+	if r.status_code == 200:
+		return r.text
+	else:
+		return None
+
+
+# 测试验证结果
+def test_query_auth_token(app_id=None, app_key=None, auth_token=None):
+	params = {
+		'app_id': str(DEFAULT_APP_ID(app_id)).decode('utf8'),		
+		'auth_token': str(DEFAULT_AUTH_TOKEN(auth_token)).decode('utf8')
+	}
+	app_key = str(DEFAULT_APP_KEY(app_key)).decode('utf8')
+	params['signature'] = gen_signature(params, app_key)
+
+	r = requests.get(API_URL+'/query_auth_token', params=params, timeout=10)
+
+	if r.status_code == 200:
+		return r.text
+	else:
+		return None
 
 
 
