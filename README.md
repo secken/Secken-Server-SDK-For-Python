@@ -89,7 +89,8 @@ qrcode_for_auth(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7
 event_result接口包含三个必传参数，app_id，event_id和signature。app_id是应用id, event_id是事件和signature是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。
 
 ```
-event_result(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', event_id='b17561423e972fba779be8a15b281eb57073f841')
+event_result(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', \
+            event_id='b17561423e972fba779be8a15b281eb57073f841')
 ```
 
 返回错误码信息
@@ -139,7 +140,8 @@ realtime_auth(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6
 query_auth_token接口包含三个必传参数，app_id, auth_token和signature。app_id是应用id，auth_token是验证token，一般由移动端人脸验证和声纹验证成功时候返回，signature是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。
 
 ```
-query_auth_token(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', auth_token='aee9ca0bbc9fb1711afcdc42cd83fb53616d317e')
+query_auth_token(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', \
+				auth_token='aee9ca0bbc9fb1711afcdc42cd83fb53616d317e')
 ```
 
 返回错误码信息
