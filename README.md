@@ -52,8 +52,12 @@ python setup.py install
 
 ## 要求和配置（Require & Config）
 
-```
 当前适用版本python2.7
+
+需要安装的依赖包
+
+```
+pip install requests --upgrade
 ```
 
 ## 获取二维码内容并发起验证事件（Get YangAuth QrCode）
@@ -63,7 +67,7 @@ python setup.py install
 qrcode_for_auth接口包含两个必传参数，app_id, signature。app_id是应用id, signature指的是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。可选参数包含auth_type(验证类型，1-一键确定，3-人脸，4-声纹)，action_type(动作类型)，action_details(动作详情)，callback(回调url链接)。
 
 ```
-test_qrcode_for_auth()
+qrcode_for_auth(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v')
 ```
 
 返回错误码信息
@@ -85,7 +89,7 @@ test_qrcode_for_auth()
 event_result接口包含三个必传参数，app_id，event_id和signature。app_id是应用id, event_id是事件和signature是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。
 
 ```
-test_event_result()
+event_result(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', event_id='b17561423e972fba779be8a15b281eb57073f841')
 ```
 
 返回错误码信息
@@ -112,7 +116,7 @@ test_event_result()
 realtime_authorization接口包含两个必传参数，app_id, uid, signature。app_id是应用id, uid是指用户名, signature指的是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。可选参数包含auth_type(验证类型，1-一键确定，3-人脸，4-声纹)，action_type(动作类型)，action_details(动作详情)，callback(回调url链接)。
 
 ```
-test_realtime_auth()
+realtime_auth(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', uid='user1')
 ```
 
 返回错误码信息
@@ -135,7 +139,7 @@ test_realtime_auth()
 query_auth_token接口包含三个必传参数，app_id, auth_token和signature。app_id是应用id，auth_token是验证token，一般由移动端人脸验证和声纹验证成功时候返回，signature是用户所有上传数据的签名。签名规则如seckenSDK.py的__get_signature()方法所示，按照键的字母顺序拼接成字符串，然后进行签名。
 
 ```
-test_query_auth_token()
+query_auth_token(app_id='IXgdZ1A7CFUej2ytUbVjFJKS5ICiorw4', app_key='ELD0DNzMYep7m6Uo1v3v', auth_token='aee9ca0bbc9fb1711afcdc42cd83fb53616d317e')
 ```
 
 返回错误码信息
@@ -150,8 +154,6 @@ test_query_auth_token()
 |  500       |       系统错误                |
 |  608       |       验证token不存在           |
 |  609       |       ip地址被禁                |
-
-
 
 
 

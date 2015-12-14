@@ -66,7 +66,7 @@ def test_service():
 		print 'Oops!!! Sorrrry, service failed, retry later'
 
 # 获取二维码链接地址及事件id
-def test_qrcode_for_auth(app_id=None, app_key=None, **options):
+def qrcode_for_auth(app_id=None, app_key=None, **options):
 	if len(options) > 4 or len(set(options.keys()) | set(['auth_type', 'action_type', 'action_details', 'callback'])) > 4:
 		print 'param error'
 		return
@@ -84,7 +84,7 @@ def test_qrcode_for_auth(app_id=None, app_key=None, **options):
 		return None
 
 # 获取推送验证的事件id
-def test_realtime_auth(app_id=None, app_key=None, uid=None, **options):
+def realtime_auth(app_id=None, app_key=None, uid=None, **options):
 	if len(options) > 4 or len(set(options.keys()) | set(['auth_type', 'action_type', 'action_details', 'callback'])) > 4:
 		print 'param error'
 		return
@@ -103,7 +103,7 @@ def test_realtime_auth(app_id=None, app_key=None, uid=None, **options):
 		return None
 
 # 测试查询事件结果
-def test_event_result(app_id=None, app_key=None, event_id=None):
+def event_result(app_id=None, app_key=None, event_id=None):
 	params = {
 			'app_id': str(DEFAULT_APP_ID(app_id)).decode('utf8'),
 			'event_id': str(DEFAULT_EVENT_ID(event_id)).decode('utf8')
@@ -120,7 +120,7 @@ def test_event_result(app_id=None, app_key=None, event_id=None):
 
 
 # 测试验证结果
-def test_query_auth_token(app_id=None, app_key=None, auth_token=None):
+def query_auth_token(app_id=None, app_key=None, auth_token=None):
 	params = {
 		'app_id': str(DEFAULT_APP_ID(app_id)).decode('utf8'),		
 		'auth_token': str(DEFAULT_AUTH_TOKEN(auth_token)).decode('utf8')
