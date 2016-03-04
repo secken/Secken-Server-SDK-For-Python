@@ -20,6 +20,8 @@
 # @author     Chen Yiping
 # @version    1.0.0
 #
+# 此文件为临时文件，主要内容在seckenSDK.py中
+
 
 import web
 
